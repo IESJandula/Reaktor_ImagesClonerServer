@@ -1,17 +1,23 @@
 package es.iesjandula.reaktor.images_cloner_server.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import es.iesjandula.reaktor.images_cloner_server.models.ImagenClonezilla;
 import es.iesjandula.reaktor.base.utils.BaseConstants;
-import es.iesjandula.reaktor.images_cloner_server.service.ImagenClonezillaService;
+import es.iesjandula.reaktor.images_cloner_server.repository.IImagenClonezillaRepository;
 import es.iesjandula.reaktor.images_cloner_server.utils.Constants;
 import es.iesjandula.reaktor.images_cloner_server.utils.ImagesClonerServerException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +30,22 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/images_cloner/client")
 public class ClientRestController
 {
+	/**
+	 * Repositorio de imágenes Clonezilla.
+	 */
 	@Autowired
-	private ImagenClonezillaService imagenClonezillaService ;
+	private IImagenClonezillaRepository imagenRepository ;
 
+	/**
+	 * Actualiza las imágenes actuales.
+	 * @param nombreImagenes Lista de nombres de imágenes.
+	 * @return ResponseEntity con la lista de imágenes.
+	 * @throws ImagesClonerServerException Excepción de servidor.
+	 */	
 	@PreAuthorize("hasRole('" + BaseConstants.ROLE_CLIENTE_CLONADOR_IMAGENES + "')")
 	@PostMapping(value = "/", consumes = "application/json")
 	@Transactional
-	public ResponseEntity<?> actualizarImagenesActuales(@RequestBody(required = true) List<String> nombreImagenes)
+	public ResponseEntity<?> actualizarImagenesActuales(@RequestBody List<String> nombreImagenes)
 	{
 		try
 		{
@@ -38,10 +53,10 @@ public class ClientRestController
 			if (nombreImagenes == null)
 			{
 				// Logueamos la excepción
-				log.error(Constants.ERR_LISTA_NOMBRES_IMAGENES_VACIA) ;
+				log.error(Constants.ERR_LISTA_NOMBRES_IMAGENES_VACIA_DESC) ;
 
 				// Devolvemos la excepción de servidor
-				throw new ImagesClonerServerException(Constants.ERR_VALIDACION_CODE, Constants.ERR_LISTA_NOMBRES_IMAGENES_VACIA) ;
+				throw new ImagesClonerServerException(Constants.ERR_LISTA_NOMBRES_IMAGENES_VACIA_CODE, Constants.ERR_LISTA_NOMBRES_IMAGENES_VACIA_DESC) ;
 			}
 
 			// Actualizamos las imágenes actuales
@@ -88,35 +103,24 @@ public class ClientRestController
 			if (nombreImagen == null || nombreImagen.isBlank())
 			{
 				// Logueamos la excepción
-				log.error(Constants.ERR_NOMBRE_IMAGEN_VACIO) ;
+				log.error(Constants.ERR_NOMBRE_IMAGEN_VACIO_DESC) ;
 
 				// Devolvemos la excepción de servidor
-				throw new ImagesClonerServerException(Constants.ERR_VALIDACION_CODE, Constants.ERR_NOMBRE_IMAGEN_VACIO) ;
+				throw new ImagesClonerServerException(Constants.ERR_NOMBRE_IMAGEN_VACIO_CODE, Constants.ERR_NOMBRE_IMAGEN_VACIO_DESC) ;
 			}
-
-			// Creamos una variable para la imagen
-			ImagenClonezilla imagenClonezilla = null ;
 
 			// Buscamos la imagen en la base de datos
 			Optional<ImagenClonezilla> optionalImagenClonezilla = this.imagenRepository.findById(nombreImagen) ;
 
-			// Si la imagen no existe, la creamos
+			// Si la imagen no existe, la creamos y la añadimos a la lista
 			if (optionalImagenClonezilla.isEmpty())
 			{
-				// Creamos la imagen
-				imagenClonezilla = new ImagenClonezilla(nombreImagen, EstadoImagen.DESACTIVADA, Constants.ACCION_POR_DEFECTO) ;
+				// Creamos una variable para la imagen
+				ImagenClonezilla imagenClonezilla = new ImagenClonezilla(nombreImagen, Constants.ESTADO_DESACTIVADA, Constants.ACCION_POWEROFF) ;
 
-				// Guardamos la imagen en la base de datos
-				this.imagenRepository.save(imagenClonezilla) ;
+				// Añadimos la imagen a la lista
+				imagenesClonezillaList.add(imagenClonezilla) ;
 			}
-			else
-			{
-				// Obtenemos la imagen
-				imagenClonezilla = optionalImagenClonezilla.get() ;
-			}
-
-			// Añadimos la imagen a la lista
-			imagenesClonezillaList.add(imagenClonezilla) ;
 		}
 
 		// Devolvemos la lista de imágenes
@@ -124,8 +128,8 @@ public class ClientRestController
 	}
 
 	@PreAuthorize("hasRole('" + BaseConstants.ROLE_CLIENTE_CLONADOR_IMAGENES + "')")
-	@PutMapping("/")
-	public ResponseEntity<?> actualizarEstadoActivada(@RequestHeader(value = "nombreImagen", required = true) String nombreImagen)
+	@PutMapping(value = "/")
+	public ResponseEntity<?> actualizarEstadoActivada(@RequestHeader(value = "nombreImagen") String nombreImagen)
 	{
 		try
 		{
@@ -133,10 +137,10 @@ public class ClientRestController
 			if (nombreImagen == null || nombreImagen.isBlank())
 			{
 				// Logueamos la excepción
-				log.error(Constants.ERR_NOMBRE_IMAGEN_VACIO) ;
+				log.error(Constants.ERR_NOMBRE_IMAGEN_VACIO_DESC) ;
 
 				// Devolvemos la excepción de servidor
-				throw new ImagesClonerServerException(Constants.ERR_VALIDACION_CODE, Constants.ERR_NOMBRE_IMAGEN_VACIO) ;
+				throw new ImagesClonerServerException(Constants.ERR_NOMBRE_IMAGEN_VACIO_CODE, Constants.ERR_NOMBRE_IMAGEN_VACIO_DESC) ;
 			}
 
 			// Actualizamos el estado de la imagen a activada

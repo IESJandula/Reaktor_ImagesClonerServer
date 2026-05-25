@@ -1,7 +1,5 @@
 package es.iesjandula.reaktor.images_cloner_server.dto;
 
-import es.iesjandula.reaktor.images_cloner_server.models.EstadoImagen;
-import es.iesjandula.reaktor.images_cloner_server.models.ImagenClonezilla;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,15 +12,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ImagenClonezillaDto
 {
+	/** Nombre de la imagen */
 	private String nombreImagen ;
-	private String estado ;
-	private String accion ;
 
-	public static ImagenClonezillaDto fromEntity(ImagenClonezilla entity)
-	{
-		return new ImagenClonezillaDto(
-				entity.getNombreImagen(),
-				entity.getEstado().name(),
-				entity.getAccion()) ;
-	}
+	/** Estado de la imagen */
+	private String estado ;
+
+	/** Acción a realizar */
+	private String accion ;
 }

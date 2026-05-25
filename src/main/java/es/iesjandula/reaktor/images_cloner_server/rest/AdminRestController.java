@@ -1,16 +1,19 @@
 package es.iesjandula.reaktor.images_cloner_server.rest;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import es.iesjandula.reaktor.base.utils.BaseConstants;
-import es.iesjandula.reaktor.images_cloner_server.dto.SetImagenDefaultRequest;
+import es.iesjandula.reaktor.images_cloner_server.dto.ImagenClonezillaDto;
 import es.iesjandula.reaktor.images_cloner_server.repository.IImagenClonezillaRepository;
 import es.iesjandula.reaktor.images_cloner_server.utils.Constants;
 import es.iesjandula.reaktor.images_cloner_server.utils.ImagesClonerServerException;
@@ -50,7 +53,7 @@ public class AdminRestController
 		{
 			// Creamos la excepción de servidor
 			ImagesClonerServerException serverException = 
-				new ImagesClonerServerException(BaseConstants.ERR_GENERICO_CODE, BaseConstants.ERR_GENERIC_EXCEPTION_MSG + "listarImagenes", exception) ;
+				new ImagesClonerServerException(BaseConstants.ERR_GENERIC_EXCEPTION_CODE, BaseConstants.ERR_GENERIC_EXCEPTION_MSG + "listarImagenes", exception) ;
 			
 			// Logueamos la excepción
 			log.error(serverException.getMessage(), exception) ;
@@ -67,8 +70,8 @@ public class AdminRestController
 	 */
 	@PreAuthorize("hasAnyRole('" + BaseConstants.ROLE_ADMINISTRADOR + "', '" + BaseConstants.ROLE_DIRECCION + "')")
 	@PostMapping(value = "/")
-	public ResponseEntity<?> establecerImagenPorDefecto(@RequestHeader(value = "nombreImagen", required = true) String nombreImagen, 
-	                                                    @RequestHeader(value = "accion", required = true) String accion)
+	public ResponseEntity<?> establecerImagenPorDefecto(@RequestHeader(value = "nombreImagen") String nombreImagen, 
+	                                                    @RequestHeader(value = "accion") String accion)
 	{
 		try
 		{
@@ -76,10 +79,10 @@ public class AdminRestController
 			if (nombreImagen == null || nombreImagen.isBlank())
 			{
 				// Logueamos la excepción
-				log.error(Constants.ERR_NOMBRE_IMAGEN_VACIO) ;
+				log.error(Constants.ERR_NOMBRE_IMAGEN_VACIO_DESC) ;
 
 				// Devolvemos la excepción de servidor
-				throw new ImagesClonerServerException(Constants.ERR_VALIDACION_CODE, Constants.ERR_NOMBRE_IMAGEN_VACIO) ;
+				throw new ImagesClonerServerException(Constants.ERR_NOMBRE_IMAGEN_VACIO_CODE, Constants.ERR_NOMBRE_IMAGEN_VACIO_DESC) ;
 			}
 
 			// Normalizamos la acción
@@ -87,6 +90,19 @@ public class AdminRestController
 
 			// Desactivamos todas las imágenes
 			this.imagenRepository.desactivarTodasLasImagenes() ;
+
+			// Validamos si existe una fila con el nombre de la imagen
+			if (this.imagenRepository.findById(nombreImagen).isEmpty())
+			{
+				// Creamos un mensaje de error
+				String mensajeError = "La imagen no existe: " + nombreImagen ;
+
+				// Logueamos la excepción
+				log.error(mensajeError) ;
+
+				// Devolvemos la excepción de servidor
+				throw new ImagesClonerServerException(Constants.ERR_IMAGEN_NO_ENCONTRADA_CODE, mensajeError) ;
+			}
 
 			// Ponemos a pendiente la imagen que ha pasado por parámetro
 			this.imagenRepository.ponerImagenAPendiente(nombreImagen, accionNormalizada) ;
@@ -139,7 +155,7 @@ public class AdminRestController
 				log.error(mensajeError) ;
 
 				// Devolvemos la excepción de servidor
-				throw new ImagesClonerServerException(Constants.ERR_VALIDACION_CODE, mensajeError) ;
+				throw new ImagesClonerServerException(Constants.ERR_ACCION_INVALIDA_CODE, mensajeError) ;
 			}
 
 			// Devolvemos la acción normalizada
@@ -148,5 +164,31 @@ public class AdminRestController
 
 		// Devolvemos la acción normalizada
 		return outcome ;
+	}
+
+	@PreAuthorize("hasAnyRole('" + BaseConstants.ROLE_ADMINISTRADOR + "', '" + BaseConstants.ROLE_DIRECCION + "')")
+	@DeleteMapping("/")
+	public ResponseEntity<?> habilitarMenuCompletoTodasLasImagenes()
+	{
+		try
+		{
+			// Desactivamos todas las imágenes
+			this.imagenRepository.desactivarTodasLasImagenes() ;
+
+			// Devolvemos la lista de imágenes
+			return ResponseEntity.ok(this.imagenRepository.buscarTodasLasImagenes()) ;
+		}
+		catch (Exception exception)
+		{
+			// Creamos la excepción de servidor
+			ImagesClonerServerException serverException = 
+				new ImagesClonerServerException(BaseConstants.ERR_GENERIC_EXCEPTION_CODE, BaseConstants.ERR_GENERIC_EXCEPTION_MSG + "eliminarImagen", exception) ;
+			
+			// Logueamos la excepción
+			log.error(serverException.getMessage(), exception) ;
+
+			// Devolvemos la excepción de servidor
+			return ResponseEntity.status(500).body(serverException.getBodyExceptionMessage()) ;
+		}
 	}
 }
