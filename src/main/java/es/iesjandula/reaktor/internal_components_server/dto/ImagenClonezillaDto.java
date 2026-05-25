@@ -1,0 +1,28 @@
+package es.iesjandula.reaktor.internal_components_server.dto;
+
+import es.iesjandula.reaktor.internal_components_server.models.EstadoImagen;
+import es.iesjandula.reaktor.internal_components_server.models.ImagenClonezilla;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * DTO de imagen Clonezilla para listados REST.
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ImagenClonezillaDto
+{
+	private String nombreImagen ;
+	private String estado ;
+	private String accion ;
+
+	public static ImagenClonezillaDto fromEntity(ImagenClonezilla entity)
+	{
+		return new ImagenClonezillaDto(
+				entity.getNombreImagen(),
+				entity.getEstado().name(),
+				entity.getAccion()) ;
+	}
+}

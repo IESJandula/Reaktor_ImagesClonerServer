@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: internal-components
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+  datasource:
+    url: jdbc:mysql://localhost:3306/reaktor_internalcomponentsserver
+    username: root
+    password: ${DB_PASSWORD}
+    hikari:
+      connection-timeout: 60000
+      maximum-pool-size: 5
+  servlet:
+    multipart:
+      max-request-size: -1
+      max-file-size: -1
+server:
+  port: 8094
+logging:
+  level:
+    root: INFO
+  file:
+    name: /tmp/reaktor_internalComponentsServer.log
+    max-size: 1MB
+    max-history: 10
+    total-size-cap: 10MB
+
+reaktor:
+  publicKeyFile: ${PUBLIC_KEY_FILE}
+  urlCors: https://somos.iesjandula.es
+  internal_components_server_url: https://api.iesjandula.es/
+  firebase_server_url: https://api.iesjandula.es/
+  notifications_server_url: https://api.iesjandula.es/
+  school_base_server_url: https://api.iesjandula.es/
+  clientId: ${CLIENT_ID}
+  http_connection_timeout: 30000
+  audit:
+    exchange: audit.exchange
+    routing-key: audit.key
