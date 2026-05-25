@@ -10,8 +10,8 @@
 		<relativePath />
 	</parent>
 
-	<artifactId>InternalComponentsServer</artifactId>
-	<name>InternalComponentsServer</name>
+	<artifactId>ImagesClonerServer</artifactId>
+	<name>ImagesClonerServer</name>
 
 	<dependencies>
 		<dependency>
@@ -60,11 +60,11 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<configuration>
 					<encoding>UTF-8</encoding>
-					<useDefaultDelimiters>true</useDefaultDelimiters>
+					<useDefaultDelimiters>true</useDefaultDelimiters>					<!--
+					Asegura el uso de delimitadores por defecto (${...}) -->
 					<filters>
 						<filter>
 							src/main/resources/application-VPS-filter.properties</filter>
-						</filter>
 					</filters>
 				</configuration>
 			</plugin>
@@ -87,7 +87,7 @@
 						<configuration>
 							<classifier>jar-with-dependencies</classifier>
 							<mainClass>
-								es.iesjandula.reaktor.internal_components_server.ReaktorInternalComponentsServerApplication</mainClass>
+								es.iesjandula.reaktor.images_cloner_server.ReaktorImagesClonerServerApplication</mainClass>
 						</configuration>
 					</execution>
 				</executions>

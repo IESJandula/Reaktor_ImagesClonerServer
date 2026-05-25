@@ -1,4 +1,4 @@
-package es.iesjandula.reaktor.internal_components_server.models;
+package es.iesjandula.reaktor.images_cloner_server.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,14 +20,22 @@ import lombok.NoArgsConstructor;
 @Data
 public class ImagenClonezilla
 {
+	/**
+	 * Nombre de la imagen.
+	 */
 	@Id
-	@Column(name = "nombre_imagen")
+	@Column
 	private String nombreImagen ;
 
-	@Enumerated(EnumType.STRING)
+	/**
+	 * Estado de la imagen.
+	 */
 	@Column(nullable = false)
-	private EstadoImagen estado ;
+	private String estado ;
 
+	/**
+	 * Acción a realizar sobre la imagen.
+	 */
 	@Column(nullable = false)
 	private String accion ;
 }

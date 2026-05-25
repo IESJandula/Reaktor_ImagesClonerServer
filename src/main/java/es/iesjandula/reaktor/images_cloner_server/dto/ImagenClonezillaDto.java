@@ -1,7 +1,7 @@
-package es.iesjandula.reaktor.internal_components_server.dto;
+package es.iesjandula.reaktor.images_cloner_server.dto;
 
-import es.iesjandula.reaktor.internal_components_server.models.EstadoImagen;
-import es.iesjandula.reaktor.internal_components_server.models.ImagenClonezilla;
+import es.iesjandula.reaktor.images_cloner_server.models.EstadoImagen;
+import es.iesjandula.reaktor.images_cloner_server.models.ImagenClonezilla;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

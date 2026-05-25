@@ -1,6 +1,6 @@
 spring:
   application:
-    name: internal-components
+    name: images-cloner
   jpa:
     hibernate:
       ddl-auto: validate
@@ -10,23 +10,19 @@ spring:
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
   datasource:
-    url: jdbc:mysql://localhost:3306/reaktor_internalcomponentsserver
+    url: jdbc:mysql://localhost:3306/reaktor_imagesclonerserver
     username: root
     password: ${DB_PASSWORD}
     hikari:
       connection-timeout: 60000
       maximum-pool-size: 5
-  servlet:
-    multipart:
-      max-request-size: -1
-      max-file-size: -1
 server:
   port: 8094
 logging:
   level:
     root: INFO
   file:
-    name: /tmp/reaktor_internalComponentsServer.log
+    name: /tmp/reaktor_imagesClonerServer.log
     max-size: 1MB
     max-history: 10
     total-size-cap: 10MB
@@ -34,10 +30,8 @@ logging:
 reaktor:
   publicKeyFile: ${PUBLIC_KEY_FILE}
   urlCors: https://somos.iesjandula.es
-  internal_components_server_url: https://api.iesjandula.es/
   firebase_server_url: https://api.iesjandula.es/
   notifications_server_url: https://api.iesjandula.es/
-  school_base_server_url: https://api.iesjandula.es/
   clientId: ${CLIENT_ID}
   http_connection_timeout: 30000
   audit:
