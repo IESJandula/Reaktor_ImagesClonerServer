@@ -152,8 +152,9 @@ public class ClientRestController
 				// Activamos la imagen
 				configuracionClonadorDto.setActivarImagen(true) ;
 
-				// Asignamos el nombre de la imagen
+				// Asignamos el nombre de la imagen y la acción
 				configuracionClonadorDto.setNombreImagen(imagenClonezilla.getNombreImagen()) ;
+				configuracionClonadorDto.setAccion(imagenClonezilla.getAccion()) ;
 			}
 		}
 	}
