@@ -21,7 +21,7 @@ public interface IImagenClonezillaRepository extends JpaRepository<ImagenClonezi
 	 * @return Lista de imágenes Clonezilla
 	 */
 	@Query("""
-		SELECT new es.iesjandula.reaktor.images_cloner_server.dto.ImagenClonezillaDto(i.nombreImagen, i.estado)
+		SELECT new es.iesjandula.reaktor.images_cloner_server.dto.ImagenClonezillaDto(i.nombreImagen, i.estado, i.accion)
 		FROM ImagenClonezilla i
 		ORDER BY i.nombreImagen ASC
 	""")
