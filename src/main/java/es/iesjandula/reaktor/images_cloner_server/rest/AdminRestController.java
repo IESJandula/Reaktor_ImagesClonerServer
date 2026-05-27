@@ -37,7 +37,7 @@ public class AdminRestController
 	 * Lista todas las imágenes Clonezilla.
 	 * @return Lista de imágenes Clonezilla.
 	 */
-	@PreAuthorize("hasAnyRole('" + BaseConstants.ROLE_ADMINISTRADOR + "', '" + BaseConstants.ROLE_DIRECCION + "')")
+	@PreAuthorize("hasRole('" + BaseConstants.ROLE_DEPARTAMENTO_INFORMATICA + "')")
 	@GetMapping("/")
 	public ResponseEntity<?> listarImagenes()
 	{
@@ -68,7 +68,7 @@ public class AdminRestController
 	 * @param request Request con el nombre de la imagen y la acción.
 	 * @return ResponseEntity con el resultado.
 	 */
-	@PreAuthorize("hasAnyRole('" + BaseConstants.ROLE_ADMINISTRADOR + "', '" + BaseConstants.ROLE_DIRECCION + "')")
+	@PreAuthorize("hasRole('" + BaseConstants.ROLE_DEPARTAMENTO_INFORMATICA + "')")
 	@PostMapping(value = "/")
 	public ResponseEntity<?> establecerImagenPorDefecto(@RequestHeader(value = "nombreImagen") String nombreImagen, 
 	                                                    @RequestHeader(value = "accion") String accion)
@@ -166,7 +166,7 @@ public class AdminRestController
 		return outcome ;
 	}
 
-	@PreAuthorize("hasAnyRole('" + BaseConstants.ROLE_ADMINISTRADOR + "', '" + BaseConstants.ROLE_DIRECCION + "')")
+	@PreAuthorize("hasRole('" + BaseConstants.ROLE_DEPARTAMENTO_INFORMATICA + "')")
 	@DeleteMapping("/")
 	public ResponseEntity<?> habilitarMenuCompletoTodasLasImagenes()
 	{
